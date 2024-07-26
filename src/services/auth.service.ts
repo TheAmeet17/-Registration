@@ -1,4 +1,5 @@
 import User from '../models/admin.models'
+import { Express } from 'express'
 import bcrypt, { hash } from 'bcryptjs'
 import { signupBodySchema } from '../validators/auth.validator'
 import { z } from 'zod'
@@ -59,4 +60,28 @@ export async function refresh(refreshToken: string) {
     } catch (error) {
         throw Boom.unauthorized('User is not logged in')
     }
+}
+export const getAdminProfile = async () => {
+    const admins = await User.find().select('-password -__v')
+    return admins
+}
+
+export const updateAdminProfile = async (
+    id: any,
+    fullname: any,
+    password: any
+) => {
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    // Update the admin profile
+    const updatedUser = await User.findByIdAndUpdate(
+        id,
+        { fullName: fullname, password: hashedPassword },
+        { new: true }
+    )
+
+    if (!updatedUser) {
+        throw Boom.notFound('User not found')
+    }
+    return updatedUser
 }

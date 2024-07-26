@@ -31,12 +31,8 @@ export const loginAdmin = async (
             email,
             password
         )
-        // res.cookie('refreshToken', refreshToken, {
-        //     httpOnly: true,
-        //     path: '/api/auth/refresh',
-        // }).json({ accessToken }) ,
         res.json({
-            message: 'User login successfully',
+            message: 'Admin login successfully',
             Accesstoken: accessToken,
         })
     } catch (error) {
@@ -53,6 +49,43 @@ export const refreshToken = async (
     try {
         const token = await Authservice.refresh(refreshToken)
         res.json({ accessToken: token })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getProfile = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const adminProfile = await Authservice.getAdminProfile()
+        return res.status(200).json({
+            message: 'Admins fetched successfully',
+            data: adminProfile,
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+export const updateProfile = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { id } = req.params
+        const { fullname, password } = req.body
+        const updatedAdmin = await Authservice.updateAdminProfile(
+            id,
+            fullname,
+            password
+        )
+        res.json({
+            message: 'Admin profile update successfully',
+            data: updatedAdmin,
+        })
     } catch (error) {
         next(error)
     }

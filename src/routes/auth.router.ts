@@ -7,12 +7,13 @@ const router = Router()
 
 router.post('/admin/login', validate(loginSchema), AuthController.loginAdmin)
 router.post(
-    `/admin/signup`,
+    '/admin/signup',
     validate(signupSchema),
     AuthController.registerAdmin
 )
-
+router.get('/admin/dashboard/profile', AuthController.getProfile)
 router.post('/refresh', AuthController.refreshToken)
+router.patch('/admin/dashboard/updateprofile/:id', AuthController.updateProfile)
 
 router.post('/logout', () => {
     console.log(
